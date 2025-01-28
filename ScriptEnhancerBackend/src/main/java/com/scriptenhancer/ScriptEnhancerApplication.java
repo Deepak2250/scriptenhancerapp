@@ -1,0 +1,12 @@
+package com.scriptenhancer;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class ScriptEnhancerApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(ScriptEnhancerApplication.class, args);
+    }
+}
