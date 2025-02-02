@@ -9,7 +9,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.scriptenhancer.customexceptions.AdminDeletionIsNotAllowed;
 import com.scriptenhancer.customexceptions.AlreadyUsedEmail;
+import com.scriptenhancer.customexceptions.ImageNotSaved;
+import com.scriptenhancer.customexceptions.NoInputAndOutputFound;
 import com.scriptenhancer.customexceptions.UsersNotFound;
 import com.scriptenhancer.customexceptions.ValidationException;
 import com.scriptenhancer.customexceptions.WrongAuthenticationCredentials;
@@ -53,4 +56,24 @@ public class RestGlobaladvice {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
 
+    @ExceptionHandler(NoInputAndOutputFound.class)
+    public ResponseEntity<Map<String, Object>> handleInputAndOutput(NoInputAndOutputFound ex) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("error", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+    }
+    
+    @ExceptionHandler(AdminDeletionIsNotAllowed.class)
+    public ResponseEntity<Map<String, Object>> handleAdminDeletionIsNotAllowed(AdminDeletionIsNotAllowed ex) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("error", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+    }
+    
+    @ExceptionHandler(ImageNotSaved.class)
+    public ResponseEntity<Map<String, Object>> handleImageNotSaved(ImageNotSaved ex) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("error", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+    }
 }

@@ -57,9 +57,10 @@ public class SignUpAndLoginController {
                     .collect(Collectors.toList());
             throw new ValidationException(errors);
         }
+        
         String jwt = jwtService.authentication(authRequest);
         return ResponseEntity.status(HttpStatus.OK)
-                .header("Auth", "Bearer " + jwt) // Add the token as a Bearer token
+                .header("Authorization", "Bearer " + jwt) // Add the token as a Bearer token
                 .header("abc", "I am a random header")
                 .body("Login successful. JWT token added in the header." + jwt);
 

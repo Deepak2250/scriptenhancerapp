@@ -1,11 +1,14 @@
 package com.scriptenhancer.JwtConfig;
 
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.crypto.SecretKey;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Claims;
@@ -43,20 +46,24 @@ public class JwtUtil {
         return extractExpiration(token).before(new Date());
     }
 
-    public String generateToken(String username) { // We are
+    public String generateToken(UserDetails user) { // We are
                                                    // generating
                                                    // token here
                                                    // while
                                                    // returning
         // the claims
+    	
+    	
         Map<String, Object> claims = new HashMap<>(); // This hashmap will stores our claims
-        return createToken(claims, username); // retruning the create token method with claims
+        java.util.Collection<? extends GrantedAuthority> userRole = user.getAuthorities(); //The Role::getRole is a short hand method to call a function of a class
+       claims.put("roles",userRole.stream().map(GrantedAuthority :: getAuthority).toList());
+        return createToken(claims, user); // retruning the create token method with claims
     }
 
-    private String createToken(Map<String, Object> claims, String subject) {
+    private String createToken(Map<String, Object> claims, UserDetails user) {
         return Jwts.builder() // building a jwt token things like the unique id of the user , time to expire
                 .claims(claims)
-                .subject(subject) // unique id which is email
+                .subject(user.getUsername()) // unique id which is email
                 .header().empty().add("typ", "JWT") // header includes the token type and algo name
                 .and()
                 .issuedAt(new Date(System.currentTimeMillis())) // isse time

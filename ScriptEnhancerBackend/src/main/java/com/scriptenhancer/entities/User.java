@@ -1,5 +1,6 @@
 package com.scriptenhancer.entities;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -12,6 +13,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -26,6 +28,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Table(name = "signup_users")
+@Data
 public class User {
 
     @Id
@@ -33,14 +36,18 @@ public class User {
 
     @Column(nullable = false)
     private String password;
+    
+    @Lob // Stores large binary data
+    @Column(columnDefinition = "LONGBLOB" , nullable = true)
+    private byte[] profile;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JsonManagedReference
     @JoinTable(name = "signupuser_roles", joinColumns = @JoinColumn(name = "user_email", referencedColumnName = "email"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private List<Role> roles;
     
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "user_inputs_outputs" , joinColumns = @JoinColumn(name = "user_email" , referencedColumnName = "email") , inverseJoinColumns = @JoinColumn(name = "nput_output_id"))
-    private List<InputAndOutput> inputAndOutputs;
+    @ManyToMany(cascade = CascadeType.ALL , fetch = FetchType.EAGER)
+    @JoinTable(name = "user_inputs_outputs" , joinColumns = @JoinColumn(name = "user_email" , referencedColumnName = "email") , inverseJoinColumns = @JoinColumn(name = "input_output_id"))
+    private List<InputAndOutput> inputAndOutputs =  new ArrayList<InputAndOutput>();
 
 }

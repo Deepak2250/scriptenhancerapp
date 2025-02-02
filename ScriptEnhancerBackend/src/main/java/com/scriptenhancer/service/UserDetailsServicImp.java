@@ -15,6 +15,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.scriptenhancer.customexceptions.UsersNotFound;
 import com.scriptenhancer.entities.User;
 import com.scriptenhancer.model.CustomUserDetails;
 import com.scriptenhancer.repository.UserRepository;
@@ -33,14 +34,18 @@ public class UserDetailsServicImp implements UserDetailsService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         log.debug("Entered in the loadername method");
         Optional<User> user = userRepository.findByEmail(email);
+        User user2 = null;
 
         if (user.isEmpty()) {
-            throw new UsernameNotFoundException("User not found with email: " + email);
+            throw new UsersNotFound("User not found with email: " + email);
         }
+        if (user.isPresent()) {
+			user2 = user.get();
+		}
         Collection<? extends GrantedAuthority> authorities = user.get().getRoles().stream()
                 .map(authRoles -> new SimpleGrantedAuthority(authRoles.getRole()))
                 .collect(Collectors.toList());
 
-        return new CustomUserDetails(user.get().getEmail(), user.get().getPassword(), authorities);
+        return new CustomUserDetails(user.get().getEmail(), user.get().getPassword() , authorities, user.get().getProfile() , user2);
     }
 }

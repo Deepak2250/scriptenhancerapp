@@ -107,6 +107,12 @@
     <version>1.4.11</version> <!-- Ensure to use the latest version -->
 </dependency>
 
+  <dependency>
+        <groupId>commons-fileupload</groupId>
+        <artifactId>commons-fileupload</artifactId>
+        <version>1.4</version>
+    </dependency>
+
 <dependency>
     <groupId>com.fasterxml.jackson.core</groupId>
     <artifactId>jackson-databind</artifactId>

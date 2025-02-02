@@ -1,5 +1,7 @@
 package com.scriptenhancer.config;
 
+import java.util.Arrays;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,8 +19,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.scriptenhancer.JwtConfig.JwtFilter;
 import com.scriptenhancer.service.UserDetailsServicImp;
@@ -85,7 +85,8 @@ public class SecurityConfiguration {
                 .csrf(csrf -> csrf.disable()) // Disable CSRF for stateless APIs
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/admin/**").hasAuthority("ADMIN")
-                        .requestMatchers("/api/**", "/api/scriptenhancer/**").permitAll()
+                        .requestMatchers("/api/user/**").hasAnyAuthority("USER" , "ADMIN")
+                        .requestMatchers("/api/auth/**").permitAll()
                         .anyRequest().authenticated() // Protect all other endpoints
                 )
                 .sessionManagement(sess -> sess
@@ -105,11 +106,19 @@ public class SecurityConfiguration {
         return configuration.getAuthenticationManager();
     }
 
-    @Autowired
+  //  @Bean
+    //AuthenticationProvider authenticationProvider() {
+      //  DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        //authProvider.setUserDetailsService(userDetailsServicImp); // Set UserDetailsService manually
+        //authProvider.setPasswordEncoder(passwordEncoder()); // Use password encoder
+        //return authProvider;
+   // }
+
+     @Autowired
     protected void configureAuthentication(AuthenticationManagerBuilder auth)
-            throws Exception {
-        auth.userDetailsService(userDetailsServicImp).passwordEncoder(config.passwordEncoder());
-    }
+       throws Exception {
+     auth.userDetailsService(userDetailsServicImp).passwordEncoder(config.passwordEncoder());
+  }
 
     @Bean
     CorsFilter corsFilter() {
@@ -118,9 +127,9 @@ public class SecurityConfiguration {
         config.setAllowCredentials(true);
         config.addAllowedOrigin("http://localhost:5173");
         config.addAllowedHeader("*");
-        config.addExposedHeader("Auth");
+        config.addExposedHeader("Authorization");
         config.addExposedHeader("abc");
-        config.addAllowedMethod("*");
+        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS")); // ✅ Explicitly allow methods
         source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);
     }

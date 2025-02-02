@@ -1,12 +1,12 @@
 package com.scriptenhancer.customexceptions;
 
-public class AlreadyUsedEmail extends RuntimeException {
+public class AdminDeletionIsNotAllowed extends RuntimeException {
     /**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public AlreadyUsedEmail(String message) {
+	public AdminDeletionIsNotAllowed(String message) {
         super(message);
     }
 

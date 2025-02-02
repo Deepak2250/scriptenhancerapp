@@ -27,15 +27,15 @@ public class JwtService {
     public String authentication(AuthRequest authRequest) {
         org.springframework.security.core.Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword()));
-        UserDetails userDetails = userDetailsService.loadUserByUsername(authRequest.getEmail());
-        log.info("The user has been founded : " + userDetails.getUsername());
-        String jwtToken = jwtUtil.generateToken(userDetails.getUsername());
+        UserDetails userDetails =  userDetailsService.loadUserByUsername(authRequest.getEmail());
+        
+        String jwtToken = jwtUtil.generateToken(userDetails);
         log.info("The Jwt Token has been successfully created : " + jwtToken);
 
         if (authentication.isAuthenticated()) {
             return jwtToken;
         } else {
-            throw new WrongAuthenticationCredentials();
+            throw new WrongAuthenticationCredentials("Please sign up first !");
         }
     }
 }

@@ -1,12 +1,13 @@
 package com.scriptenhancer.customexceptions;
 
-public class AlreadyUsedEmail extends RuntimeException {
+
+public class RoleNotFound  extends RuntimeException {
     /**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public AlreadyUsedEmail(String message) {
+	public RoleNotFound(String message) {
         super(message);
     }
 

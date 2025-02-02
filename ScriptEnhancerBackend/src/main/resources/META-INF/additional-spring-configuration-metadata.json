@@ -1,13 +1,8 @@
 {"properties": [
   {
-    "name": "openai.api.key",
+    "name": "deepseek.api.token",
     "type": "java.lang.String",
-    "description": "A description for 'openai.api.key'"
-  },
-  {
-    "name": "openai.api.url",
-    "type": "java.lang.String",
-    "description": "A description for 'openai.api.url'"
+    "description": "A description for 'deepseek.api.token'"
   },
   {
     "name": "huggingface.api.token",

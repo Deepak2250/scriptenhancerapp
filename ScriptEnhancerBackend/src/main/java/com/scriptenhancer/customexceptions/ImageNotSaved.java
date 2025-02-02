@@ -1,12 +1,12 @@
 package com.scriptenhancer.customexceptions;
 
-public class AlreadyUsedEmail extends RuntimeException {
+public class ImageNotSaved extends RuntimeException {
     /**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public AlreadyUsedEmail(String message) {
+	public ImageNotSaved(String message) {
         super(message);
     }
 

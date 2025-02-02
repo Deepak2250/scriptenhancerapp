@@ -31,14 +31,14 @@ public class InputAndOutput  {
 	private long id;
 	 
 	 @Lob
-	 @Column(nullable = true)
+	 @Column(nullable = true , columnDefinition = "LONGTEXT")
 	private String inputs;
 	 
 	 @Lob
-	 @Column(nullable = true)
+	 @Column(nullable = true , columnDefinition = "LONGTEXT")
 	 private String outputs;
 	
 	 @JsonBackReference
-	 @ManyToMany(mappedBy = "inputAndOutputs" , fetch = FetchType.EAGER)
+	 @ManyToMany(mappedBy = "inputAndOutputs" , fetch = FetchType.LAZY)
 	private List<User> user;
 }
