@@ -1,4 +1,5 @@
 import axios from "axios";
+import { jwtDecode } from "jwt-decode";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
@@ -11,10 +12,10 @@ const LoginForm = () => {
   } = useForm();
 
  const [serversideErrors , setServerSideErrors] = useState(false);
- const [rememberMe , setRememberMe] = useState(false)
- const navigate = useNavigate();
-
-
+ const [rememberMe , setRememberMe] = useState(false);
+   const navigate = useNavigate();
+  
+ // Handling the onSubmiut form button
   const onSubmit = async(data) => {
     try{
   const response = await axios.post("http://localhost:8080/api/auth/login" , data );
@@ -23,14 +24,18 @@ const LoginForm = () => {
 
   if (jwtToken && jwtToken.startsWith("Bearer ")) {
     const bearerToken = jwtToken.split(" ")[1]; // Splits "Bearer <token>" into ["Bearer", "<token>"]
+    const user = jwtDecode(bearerToken);
     console.log("Extracted Token:", bearerToken);
     if(rememberMe){
     localStorage.setItem("jwttoken" , bearerToken)
+    localStorage.setItem('exp' , user.exp)
     }
     else{
       sessionStorage.setItem("jwttoken" , bearerToken)
+      sessionStorage.setItem('exp' , user.exp)
     }
-    navigate("/");
+    //  {<Link to={"/"}></Link>}
+    window.location.href = "/"; // Redirect to login
 } else {
     console.log("Fuck You");
     

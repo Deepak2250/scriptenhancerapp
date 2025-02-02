@@ -1,17 +1,25 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
-import { FaTrash } from "react-icons/fa";
+import { FaRegTrashAlt } from "react-icons/fa";
 
-const HistoryPage = () => {
+const HistoryPage = ({token , checkTokenExpiry}) => {
   const [data, setData] = useState([]);
   const [error, setError] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedId, setSelectedId] = useState(null);
+  const [loading, setLoading] = useState(false); // New loading state
 
   useEffect(() => {
     const getData = async () => {
       try {
-        const response = await axios.get("http://localhost:8080/api/scriptenhancer/getallinputandoutput");
+        const response = await axios.get("http://localhost:8080/api/scriptenhancer/history" , {
+          headers :{
+            Authorization: `Bearer ${token}`,
+          }
+        });
         console.log(response.data);
         setData(response.data);
+        
         setError(false); // Reset error state when data is successfully fetched
       } catch (error) {
         console.log(error);
@@ -19,19 +27,34 @@ const HistoryPage = () => {
       }
     };
 
+    checkTokenExpiry();
     getData();
   }, []); // Fetch data only once when the component mounts
 
-  const handleSubmit = async (id) => {
+  const handleDeleteClick = ((id) =>{
+     setSelectedId(id);
+     setShowModal(true);
+
+  });
+
+  const handleConfirmDeletion = async () => {
+
+    setShowModal(false);
+    if (!selectedId) {
+      return
+    }
     try {
       const response = await axios.delete(
-        `http://localhost:8080/api/scriptenhancer/delete/inputout?id=${id}`
+        `http://localhost:8080/api/scriptenhancer/delete?id=${selectedId}` , {
+          headers : {
+            Authorization : `Bearer ${token}`,
+          }
+        }
       );
       console.log("Delete response:", response.data);
 
       // Update the state to exclude the deleted item
-      setData((prevData) => prevData.filter((item) => item.id !== id));
-      // setData((prevData) => [...prevData, { id }]);
+      setData((prevData) => prevData.filter((item) => item.id !== selectedId));
     } catch (error) {
       console.error("Error deleting item:", error);
     }
@@ -45,7 +68,12 @@ const HistoryPage = () => {
         <p className="mt-4 text-xl">See the input and its enhanced output</p>
       </section>
 
-      {/* Main Content */}
+      {loading ? (
+        <div className="w-full h-screen flex justify-center items-center">
+       <ThreeDot variant="bounce" color="#32cd32" size="medium" text="" textColor="" />
+       </div>
+      ) : (
+     // {/* Main Content */}
       <div className="container mx-auto py-12 px-6">
         {/* If error occurs while fetching */}
         {error ? (
@@ -60,8 +88,8 @@ const HistoryPage = () => {
                   <div key={index} className="flex flex-col md:flex-row gap-8 mb-12">
                     <div className='flex justify-center items-start font-medium text-xl text-white gap-2'>
                       {item.id}.
-                      <button onClick={() => handleSubmit(item.id)} className='mt-1'>
-                        <FaTrash />
+                      <button onClick={() => handleDeleteClick(item.id)} className='mt-1'>
+                        <FaRegTrashAlt />
                       </button>
                     </div>
 
@@ -85,6 +113,17 @@ const HistoryPage = () => {
               </div>
             )}
       </div>
+      )}
+       {/* Delete Confirmation Modal */}
+                                        
+       {showModal && ( // show the confirmation modal if the showmodal is true
+        <ConfirmationModal
+          showModal={showModal}
+          onConfirm={handleConfirmDeletion}
+          onCancel={() => setShowModal(false)}
+          itemName={selectedId}
+        />
+      )}
     </div>
   );
 };
