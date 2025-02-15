@@ -3,6 +3,8 @@ import { jwtDecode } from "jwt-decode";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
+import { LoginWithGithub } from "./LoginWithGithub";
+import { LoginWithGoogle } from "./LoginWithGoogle";
 
 const LoginForm = () => {
   const {
@@ -11,63 +13,70 @@ const LoginForm = () => {
     formState: { errors },
   } = useForm();
 
- const [serversideErrors , setServerSideErrors] = useState(false);
- const [rememberMe , setRememberMe] = useState(false);
-   const navigate = useNavigate();
-  
- // Handling the onSubmiut form button
-  const onSubmit = async(data) => {
-    try{
-  const response = await axios.post("http://localhost:8080/api/auth/login" , data );
-  console.log(response.data);
-  const jwtToken = response.headers.get("Authorization");
+  const [serversideErrors, setServerSideErrors] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+  const [github, setGithub] = useState(false);
+  const navigate = useNavigate();
 
-  if (jwtToken && jwtToken.startsWith("Bearer ")) {
-    const bearerToken = jwtToken.split(" ")[1]; // Splits "Bearer <token>" into ["Bearer", "<token>"]
-    const user = jwtDecode(bearerToken);
-    console.log("Extracted Token:", bearerToken);
-    if(rememberMe){
-    localStorage.setItem("jwttoken" , bearerToken)
-    localStorage.setItem('exp' , user.exp)
-    }
-    else{
-      sessionStorage.setItem("jwttoken" , bearerToken)
-      sessionStorage.setItem('exp' , user.exp)
-    }
-    //  {<Link to={"/"}></Link>}
-    window.location.href = "/"; // Redirect to login
-} else {
-    console.log("Fuck You");
-    
-}
+  // Handling the onSubmiut form button
+  const onSubmit = async (data) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:8080/api/auth/login",
+        data
+      );
+      const jwtToken = response.headers.get("Authorization");
 
-  setServerSideErrors(false);
-    }
-    catch(error) {
-        console.error('Signup Failed:', error.response?.data || error.response);
-        setServerSideErrors(true)
-        if (error.response?.data?.errors) {
-          alert('Validation Errors: ' + error.response.data.errors.join(', '));
+      if (jwtToken && jwtToken.startsWith("Bearer ")) {
+        const bearerToken = jwtToken.split(" ")[1]; // Splits "Bearer <token>" into ["Bearer", "<token>"]
+        const user = jwtDecode(bearerToken);
+        console.log("Extracted Token:", bearerToken);
+        if (rememberMe) {
+          localStorage.setItem("jwttoken", bearerToken);
+          localStorage.setItem("exp", user.exp);
         } else {
-          alert('Signup Failed. Please try again.');
+          sessionStorage.setItem("jwttoken", bearerToken);
+          sessionStorage.setItem("exp", user.exp);
         }
+        //  {<Link to={"/"}></Link>}
+        window.location.href = "/"; // Redirect to login
+      }
+
+      setServerSideErrors(false);
+    } catch (error) {
+      console.error("Signup Failed:", error.response?.data || error.response);
+      setServerSideErrors(true);
+      if (error.response?.data?.errors) {
+        alert("Validation Errors: " + error.response.data.errors.join(", "));
+      } else {
+        alert("Signup Failed. Please try again.");
+      }
     }
+  };
+
+  /// Github
+
+  const onGihubClick = () => {
+    setGithub(true);
   };
 
   return (
     <div className="min-h-screen w-100 flex items-center justify-center px-4">
       <div className="w-full max-w-md bg-[#262727] border border-[#5a5a5a] shadow-2xl rounded-2xl overflow-hidden">
         <div className="p-6">
-          <h2 className="text-3xl font-bold text-white text-center">
-            Login
-          </h2>
-          <p className= {serversideErrors ? "text-red-600 text-center mt-2" : "text-white text-center mt-2"}>
-          {serversideErrors ? "The email or password is incorrect." : "Please login to your account"}
-          </p>
-          <form
-            onSubmit={handleSubmit(onSubmit)}
-            className="mt-6"
+          <h2 className="text-3xl font-bold text-white text-center">Login</h2>
+          <p
+            className={
+              serversideErrors
+                ? "text-red-600 text-center mt-2"
+                : "text-white text-center mt-2"
+            }
           >
+            {serversideErrors
+              ? "The email or password is incorrect."
+              : "Please login to your account"}
+          </p>
+          <form onSubmit={handleSubmit(onSubmit)} className="mt-6">
             <div className="mb-4">
               <label
                 htmlFor="email"
@@ -75,8 +84,11 @@ const LoginForm = () => {
               >
                 Email
               </label>
-              <input type="email" id="email" placeholder="Enter your email"
-               {...register("email", {
+              <input
+                type="email"
+                id="email"
+                placeholder="Enter your email"
+                {...register("email", {
                   required: "Email is required",
                   pattern: {
                     value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
@@ -127,13 +139,11 @@ const LoginForm = () => {
                   type="checkbox"
                   className="mr-2 leading-tight focus:ring-blue-400"
                   onChange={() => setRememberMe(!rememberMe)}
-                  checked ={rememberMe}
+                  checked={rememberMe}
                 />
                 <span className="text-sm">Remember me</span>
               </label>
-              <a
-                href="#"
-                className="text-sm text-yellow-400 hover:underline">
+              <a href="#" className="text-sm text-yellow-400 hover:underline">
                 Forgot Password?
               </a>
             </div>
@@ -143,10 +153,28 @@ const LoginForm = () => {
             >
               Login
             </button>
+
+            <button
+              type="button" // Use type="button" to avoid form submission
+              className="w-full mt-6  bg-yellow-400 hover:bg-yellow-700 text-black font-bold py-2 rounded-lg shadow-md hover:shadow-lg transform hover:scale-105 transition-transform"
+              onClick={LoginWithGithub} // Directly call LoginWithGithub
+            >
+              Login with GitHub
+            </button>
+
+            <button
+              type="button" // Use type="button" to avoid form submission
+              className="w-full mt-6  bg-yellow-400 hover:bg-yellow-700 text-black font-bold py-2 rounded-lg shadow-md hover:shadow-lg transform hover:scale-105 transition-transform"
+              onClick={LoginWithGoogle} // Directly call LoginWithGithub
+            >
+              Login with Google
+            </button>
+
           </form>
           <p className="text-center text-white mt-4">
             Don't have an account?{" "}
-            <Link to={"/signup"}
+            <Link
+              to={"/signup"}
               className="text-yellow-400 font-semibold hover:underline"
             >
               Sign up
@@ -154,6 +182,7 @@ const LoginForm = () => {
           </p>
         </div>
       </div>
+      {github && <LoginWithGithub />}
     </div>
   );
 };

@@ -7,7 +7,7 @@ import ConfirmationModal from "./ConfirmationModal";
 import { ThreeDot } from "react-loading-indicators";
 
 // Function to render the user table
-const AllMembers = ({ token, isAdmin, tokenDecoded, checkTokenExpiry }) => {
+const AllMembers = ({ token, isAdmin, tokenDecoded}) => {
   /// taking token , decodedtoken and isAdmin from the parent app page
 
   const navigate = useNavigate();
@@ -74,7 +74,7 @@ const AllMembers = ({ token, isAdmin, tokenDecoded, checkTokenExpiry }) => {
     };
 
     // Check the token expiry
-    checkTokenExpiry();
+    // checkTokenExpiry();
     dataResponse();
   }, []);
 

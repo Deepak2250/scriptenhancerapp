@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { ThreeDot } from "react-loading-indicators";
 import ConfirmationModal from "./ConfirmationModal";
 
-const Profile = ({ checkTokenExpiry, tokenDecoded, token }) => {
+const Profile = ({tokenDecoded, token }) => {
   // Assuming you have a function to get the user email from localStorage/sessionStorage\
 
   const [isImageAvailable, setImageAvailable] = useState(false);
@@ -22,7 +22,7 @@ const Profile = ({ checkTokenExpiry, tokenDecoded, token }) => {
   const navigate = useNavigate();
   
   useEffect(() => {
-    checkTokenExpiry();
+    // checkTokenExpiry();
     fetchProfileImage();
   }, []);
 
@@ -46,7 +46,7 @@ const Profile = ({ checkTokenExpiry, tokenDecoded, token }) => {
         setImageAvailable(true);
         setDeletes(true);
         let extractedUrl = URL.createObjectURL(imageUrl);
-        console.log("The extractedUrl url is here : " + extractedUrl);
+        // console.log("The extractedUrl url is here : " + extractedUrl);
         setOgUrl(extractedUrl);
         setUrl(extractedUrl);
       }
@@ -54,9 +54,9 @@ const Profile = ({ checkTokenExpiry, tokenDecoded, token }) => {
       setDeletes(false);
       setLoading(false);
       setOgUrl(null);
-      console.log("There is no image : " + error);
+      // console.log("There is no image : " + error);
       setImageAvailable(false);
-      console.error("Error fetching profile image:", error);
+      // console.error("Error fetching profile image:", error);
     } finally {
       setLoading(false);
     }
@@ -85,7 +85,7 @@ const Profile = ({ checkTokenExpiry, tokenDecoded, token }) => {
   };
 
   const handleConfirmationClick = async () => {
-    console.log("The selected file is : " ,selectedFile);
+    // console.log("The selected file is : " ,selectedFile);
     
     if (selectedFile) {
       const formData = new FormData();
@@ -107,11 +107,11 @@ const Profile = ({ checkTokenExpiry, tokenDecoded, token }) => {
         setImageAvailable(true);
         setOgUrl(URL.createObjectURL(selectedFile));
         setUrl(URL.createObjectURL(selectedFile));
-        console.log("Image uploaded successfully", response.data);
+        // console.log("Image uploaded successfully", response.data);
         // Optionally, update your UI or state here
       } catch (error) {
         setDeletes(false);
-        console.error("Error uploading image:", error);
+        // console.error("Error uploading image:", error);
         // Handle error appropriately (e.g., notify the user)
       }
     } else {
@@ -147,7 +147,7 @@ const handleConfirmDeletion = async() =>{
 }
 
 catch(error){
-console.log(error);
+alert("No Image to be deleted " ,error);
 
 }
 }
@@ -255,10 +255,8 @@ console.log(error);
           <button
             className="bg-blue-500 text-white py-2 px-6 rounded-full text-sm hover:bg-blue-600 transition duration-200"
             onClick={() => {
-              localStorage.removeItem("jwttoken");
-              sessionStorage.removeItem("jwttoken");
-              localStorage.removeItem("exp");
-              sessionStorage.removeItem("exp");
+              localStorage.clear();
+              sessionStorage.clear();
 
               window.location.href = "/"; // Redirect to login
             }}

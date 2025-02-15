@@ -5,7 +5,7 @@ import axios from 'axios';
 import { ThreeDot } from "react-loading-indicators";
 
 
-const Home = ({token , checkTokenExpiry , isAdmin , exp}) => {
+const Home = ({token , isAdmin , exp}) => {
   const [userInput, setUserInput] = useState('');
   const [response, setResponse] = useState('Welcome to ScriptEnhancer! Type something to get started.');
   const [loading, setLoading] = useState(false); // New loading state
@@ -57,7 +57,7 @@ const Home = ({token , checkTokenExpiry , isAdmin , exp}) => {
 
   useEffect(() => {
   
-    checkTokenExpiry();
+    // checkTokenExpiry();
   }, []);
 
   return (

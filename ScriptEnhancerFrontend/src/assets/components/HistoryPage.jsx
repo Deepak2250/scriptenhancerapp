@@ -1,8 +1,9 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import { FaRegTrashAlt } from "react-icons/fa";
+import ConfirmationModal from "./ConfirmationModal";
 
-const HistoryPage = ({token , checkTokenExpiry}) => {
+const HistoryPage = ({token}) => {
   const [data, setData] = useState([]);
   const [error, setError] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -17,17 +18,15 @@ const HistoryPage = ({token , checkTokenExpiry}) => {
             Authorization: `Bearer ${token}`,
           }
         });
-        console.log(response.data);
         setData(response.data);
         
         setError(false); // Reset error state when data is successfully fetched
       } catch (error) {
-        console.log(error);
         setError(true); // Set error state if there's an error fetching data
       }
     };
 
-    checkTokenExpiry();
+    // checkTokenExpiry();
     getData();
   }, []); // Fetch data only once when the component mounts
 
@@ -51,12 +50,11 @@ const HistoryPage = ({token , checkTokenExpiry}) => {
           }
         }
       );
-      console.log("Delete response:", response.data);
 
       // Update the state to exclude the deleted item
       setData((prevData) => prevData.filter((item) => item.id !== selectedId));
     } catch (error) {
-      console.error("Error deleting item:", error);
+      alert("Error deleting item:", error);
     }
   };
 
