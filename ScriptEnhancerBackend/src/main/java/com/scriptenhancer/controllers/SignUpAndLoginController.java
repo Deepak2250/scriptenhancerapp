@@ -32,6 +32,7 @@ public class SignUpAndLoginController {
 
     @Autowired
     private JwtService jwtService;
+    
 
     @PostMapping("/signup")
     public ResponseEntity<User> signUp(@Valid @RequestBody UserDTO userDTO, BindingResult bindingResult) {
@@ -58,7 +59,7 @@ public class SignUpAndLoginController {
             throw new ValidationException(errors);
         }
         
-        String jwt = jwtService.authentication(authRequest);
+        String jwt = jwtService.authentication(authRequest.getEmail() , authRequest.getPassword());
         return ResponseEntity.status(HttpStatus.OK)
                 .header("Authorization", "Bearer " + jwt) // Add the token as a Bearer token
                 .header("abc", "I am a random header")

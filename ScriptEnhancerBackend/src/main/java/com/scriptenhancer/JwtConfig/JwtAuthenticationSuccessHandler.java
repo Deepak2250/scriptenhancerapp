@@ -26,7 +26,7 @@ public class JwtAuthenticationSuccessHandler implements AuthenticationSuccessHan
 
         AuthRequest authRequest = new AuthRequest(user.getUsername(), user.getPassword());
 
-        String token = jwtService.authentication(authRequest); // Generate JWT for authenticated user
+        String token = jwtService.authentication(authRequest.getEmail() , authRequest.getPassword()); // Generate JWT for authenticated user
         response.setHeader("Authorization", "Bearer " + token); // Return JWT in response header
         response.setStatus(HttpServletResponse.SC_OK);
         response.getWriter().write("{\"message\": \"Login successful\", \"token\": \"" + token + "\"}");

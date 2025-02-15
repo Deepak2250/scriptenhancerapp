@@ -75,6 +75,12 @@ public class UserService {
         userRepository.save(user);
         return user;
     }
+    
+    public boolean userNotExist(String email) {
+        Optional<User> user = userRepository.findByEmail(email);
+        return user.isEmpty();  // Return true if user does not exist
+    }
+
 
     @Transactional
     public String uploadImage(MultipartFile multipartFile){

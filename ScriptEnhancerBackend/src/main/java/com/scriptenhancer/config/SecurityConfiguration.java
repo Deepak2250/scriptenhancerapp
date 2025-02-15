@@ -34,9 +34,6 @@ public class SecurityConfiguration {
     private JwtFilter jwtFilter;
 
     @Autowired
-    private CustomAuthenticationFailureHandler customFailureHandler;
-
-    @Autowired
     private EncoderConfig config;
 
     @Autowired
@@ -86,7 +83,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/admin/**").hasAuthority("ADMIN")
                         .requestMatchers("/api/user/**").hasAnyAuthority("USER" , "ADMIN")
-                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/auth/**" , "/api/auth/github", "/api/auth/google").permitAll()
                         .anyRequest().authenticated() // Protect all other endpoints
                 )
                 .sessionManagement(sess -> sess

@@ -8,7 +8,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
 import com.scriptenhancer.customexceptions.WrongAuthenticationCredentials;
-import com.scriptenhancer.model.AuthRequest;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -24,18 +23,32 @@ public class JwtService {
     @Autowired
     private JwtUtil jwtUtil;
 
-    public String authentication(AuthRequest authRequest) {
-        org.springframework.security.core.Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword()));
-        UserDetails userDetails =  userDetailsService.loadUserByUsername(authRequest.getEmail());
-        
-        String jwtToken = jwtUtil.generateToken(userDetails);
-        log.info("The Jwt Token has been successfully created : " + jwtToken);
+    public String authentication(String email, String password) {
+        try {
+            if (password != null) {
+                // Standard authentication
+                org.springframework.security.core.Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(email, password));
+                UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+                String jwtToken = jwtUtil.generateToken(userDetails);
 
-        if (authentication.isAuthenticated()) {
-            return jwtToken;
-        } else {
-            throw new WrongAuthenticationCredentials("Please sign up first !");
+                if (authentication.isAuthenticated()) {
+                    return jwtToken;
+                } else {
+                    throw new WrongAuthenticationCredentials("Please sign up first!");
+                }
+            } else {
+                // OAuth2 login, no password required
+                UserDetails userDetails = userDetailsService.loadUserByUsername(email); // No need to check for the password of the user directly give the access 
+                if (userDetails == null) {
+                    throw new RuntimeException("User not found for email: " + email);
+                }
+                // Directly generate JWT
+                return jwtUtil.generateToken(userDetails);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Something might be wrong in email or password", e);
         }
     }
+
 }
